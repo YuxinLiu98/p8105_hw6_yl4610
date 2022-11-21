@@ -12,7 +12,12 @@ library(tidyverse)
 # Question 2
 ```{r, message=FALSE}
 homicide_raw = 
-  read_csv( "./data/homicide_data.csv") 
+  read_csv( "./data/homicide_data.csv") %>% 
+    mutate (
+    city_state = str_c(city, ", ", state),
+    result = ifelse(disposition != "Closed by arrest", "unsolved", "solved")) %>% 
+    filter(!(city_state %in% c("Tulsa, AL", "Dallas, TX", "Phoenix, AZ", "Kansas City, MO")))
+
 homicide_raw 
 ```
 
