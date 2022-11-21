@@ -1,0 +1,18 @@
+---
+title: "p8105_hw6_yl4610"
+output: github_document
+author: "Yuxin Liu"
+date: "2022-11-21"
+---
+
+```{r setup, message=FALSE}
+library(tidyverse)
+```
+
+# Question 2
+```{r, message=FALSE}
+homicide_raw = 
+  read_csv( "./data/homicide_data.csv") 
+homicide_raw 
+```
+
