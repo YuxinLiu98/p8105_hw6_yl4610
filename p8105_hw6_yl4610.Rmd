@@ -16,7 +16,10 @@ homicide_raw =
     mutate (
     city_state = str_c(city, ", ", state),
     result = ifelse(disposition != "Closed by arrest", "unsolved", "solved")) %>% 
-    filter(!(city_state %in% c("Tulsa, AL", "Dallas, TX", "Phoenix, AZ", "Kansas City, MO")))
+    filter(!(city_state %in% c("Tulsa, AL", "Dallas, TX", "Phoenix, AZ", "Kansas City, MO"))) %>% 
+    filter(victim_race %in% c("White", "Black")) %>% 
+    filter(!(victim_age %in% c("Unknown"))) %>% 
+    mutate (victim_age = as.numeric(victim_age))
 
 homicide_raw 
 ```
