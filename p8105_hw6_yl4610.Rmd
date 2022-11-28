@@ -23,4 +23,21 @@ homicide_raw =
 
 homicide_raw 
 ```
+I used mutate to create a city_state variable and a binary variable indicating whether the homicide is solved. I used filter to omit cities Dallas, TX; Phoenix, AZ; and Kansas City, MO; Tulsa, AL. Also, I used filter to limit victim_race as White or Black and delete unknown age. Lastly, I used mutate to change victim_age to numeric format.
+
+```{r}
+Baltimore_reg = 
+ homicide_raw %>% 
+  filter(city_state == "Baltimore, MD") %>%
+  mutate (y_var = ifelse(result == "solved",0,1)) %>% 
+    glm(y_var ~ victim_age + victim_sex + victim_race, data =., family = 'binomial'(link='logit')) %>% 
+    broom::tidy () %>% 
+    mutate(odds_ratio = exp(estimate)) 
+
+Baltimore_reg
+```
+For the city of Baltimore, MD, I used the glm function to fit a logistic regression with resolved vs unresolved as the outcome and victim age, sex and race as predictors. Save the output of glm as an R object; apply the broom::tidy to this object; and obtain the estimate and confidence interval of the adjusted odds ratio for solving homicides comparing male victims to female victims keeping all other variables fixed.
+
+
+
 
