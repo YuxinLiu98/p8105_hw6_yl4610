@@ -32,8 +32,11 @@ Baltimore_reg =
   mutate (y_var = ifelse(result == "solved",0,1)) %>% 
     glm(y_var ~ victim_age + victim_sex + victim_race, data =., family = 'binomial'(link='logit')) %>% 
     broom::tidy () %>% 
-    mutate(odds_ratio = exp(estimate)) 
-
+    mutate(odds_ratio = exp(estimate),
+           lower_bound = exp(estimate - 1.96 * std.error),
+           upper_bound = exp(estimate + 1.96 * std.error)) %>% 
+    select(term, estimate, odds_ratio, lower_bound,upper_bound ) %>% 
+    knitr::kable(digits = 4)
 Baltimore_reg
 ```
 For the city of Baltimore, MD, I used the glm function to fit a logistic regression with resolved vs unresolved as the outcome and victim age, sex and race as predictors. Save the output of glm as an R object; apply the broom::tidy to this object; and obtain the estimate and confidence interval of the adjusted odds ratio for solving homicides comparing male victims to female victims keeping all other variables fixed.
