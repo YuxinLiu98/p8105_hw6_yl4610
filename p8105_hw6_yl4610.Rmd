@@ -105,12 +105,31 @@ model = lm(bwt ~ ., data = birthweight_raw) %>%
   broom::tidy() %>% 
   knitr::kable(digits = 4)
 
-regression_model = 
-  lm(bwt ~ babysex + bhead + blength + delwt + gaweeks + mheight + mrace + parity + ppwt + smoken, data = birthweight_raw) %>% 
+regression_model = lm(bwt ~ babysex + bhead + blength + delwt + gaweeks + mheight + mrace + parity + ppwt + smoken, data = birthweight_raw) 
+
+regression_model %>% 
   broom::tidy() %>% 
   knitr::kable(digits = 4)
 
 regression_model
 ```
-I proposed a regression model for birthweight. Describe your modeling process and show a plot of model residuals against fitted values – use add_predictions and add_residuals in making this plot.
+I proposed a regression model for birthweight. Describe your modeling process 
 
+```{r}
+residual_plot =
+  birthweight_raw %>% 
+  modelr::add_predictions(regression_model) %>% 
+  modelr::add_residuals(regression_model) %>%
+  ggplot(aes(x = pred, y = resid)) + 
+  geom_point(alpha = 0.5, cex=0.5) +
+  labs(
+    title = "residuals against fitted values",
+    x = "fitted values",
+    y = "residuals") +
+  theme(axis.text.x = element_text(angle=90, hjust = 1)) +
+  geom_line(aes(y = 0), color = "red") 
+
+residual_plot
+```
+
+I created a plot of model residuals against fitted values – use add_predictions and add_residuals.
