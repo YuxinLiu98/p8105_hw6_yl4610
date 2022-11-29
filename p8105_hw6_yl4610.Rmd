@@ -101,7 +101,9 @@ There is no missing data.
 I Loaded and cleaned the data for regression analysis (i.e. convert numeric to factor where appropriate, check for missing data, etc.).
 
 ```{r}
-model = lm(bwt ~ ., data = birthweight_raw) %>%
+model = lm(bwt ~ ., data = birthweight_raw) 
+
+model%>%
   broom::tidy() %>% 
   knitr::kable(digits = 4)
 
@@ -133,3 +135,20 @@ residual_plot
 ```
 
 I created a plot of model residuals against fitted values – use add_predictions and add_residuals.
+
+```{r}
+compare_model1 = lm(bwt ~ blength + gaweeks, data = birthweight_raw) 
+
+compare_model1 %>% 
+  broom::tidy() %>% 
+  knitr::kable(digits = 4)
+
+compare_model2 = lm(bwt ~  bhead + blength + babysex + bhead * blength + bhead * babysex + blength * babysex + bhead * blength * babysex, data = birthweight_raw) 
+
+compare_model2 %>% 
+  broom::tidy() %>% 
+  knitr::kable(digits = 4)
+```
+
+I compared the model to two others:
+One using length at birth and gestational age as predictors (main effects only). One using head circumference, length, sex, and all interactions (including the three-way interaction) between these.
