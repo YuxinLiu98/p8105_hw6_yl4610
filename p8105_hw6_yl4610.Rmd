@@ -7,6 +7,8 @@ date: "2022-11-21"
 
 ```{r setup, message=FALSE}
 library(tidyverse)
+library(modelr)
+library(skimr)
 ```
 
 # Question 2
@@ -82,4 +84,18 @@ I created a plot that shows the estimated ORs and CIs for each city. Then I orga
 This scatter plot shows that New York, NY has the highest estimated odds ratio for solving homicides comparing male victims to female victims keeping all other variables fixed, while Albuquerque, NM has the lowest estimated odds ratio.
 
 # Question 3 
+```{r, message = FALSE}
+birthweight_raw = 
+  read_csv("./data/birthweight.csv") %>% 
+    mutate(
+    babysex = as.factor(babysex),
+    frace = as.factor(frace),
+    malform = as.factor(malform),
+    mrace = as.factor(mrace))
+```
 
+```{r}
+skimr::skim(birthweight_raw) 
+```
+
+I Loaded and cleaned the data for regression analysis (i.e. convert numeric to factor where appropriate, check for missing data, etc.).
