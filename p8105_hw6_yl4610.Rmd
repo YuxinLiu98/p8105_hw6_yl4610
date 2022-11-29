@@ -97,5 +97,20 @@ birthweight_raw =
 ```{r}
 skimr::skim(birthweight_raw) 
 ```
-
+There is no missing data.
 I Loaded and cleaned the data for regression analysis (i.e. convert numeric to factor where appropriate, check for missing data, etc.).
+
+```{r}
+model = lm(bwt ~ ., data = birthweight_raw) %>%
+  broom::tidy() %>% 
+  knitr::kable(digits = 4)
+
+regression_model = 
+  lm(bwt ~ babysex + bhead + blength + delwt + gaweeks + mheight + mrace + parity + ppwt + smoken, data = birthweight_raw) %>% 
+  broom::tidy() %>% 
+  knitr::kable(digits = 4)
+
+regression_model
+```
+I proposed a regression model for birthweight. Describe your modeling process and show a plot of model residuals against fitted values – use add_predictions and add_residuals in making this plot.
+
