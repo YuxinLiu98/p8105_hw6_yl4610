@@ -150,5 +150,25 @@ compare_model2 %>%
   knitr::kable(digits = 4)
 ```
 
+```{r}
+cv_df = crossv_mc(birthweight_raw, 100)
+
+cv = 
+  cv_df %>%
+  mutate(
+    train = map(train, as_tibble),
+    test = map(test, as_tibble)) %>% 
+  mutate(
+    compare_model1 = map(.x = train, ~lm(bwt ~ blength + gaweeks, data = birthweight_raw)),
+    compare_model2 = map(.x = train, ~lm(bwt ~ bhead + blength + babysex + bhead*blength + blength*babysex + bhead*babysex + bhead*blength*babysex, data = birthweight_raw)),
+    regression_model = map(.x = train, ~lm(bwt ~ babysex + bhead + blength + delwt + gaweeks + mheight + mrace + parity + ppwt + smoken, data = birthweight_raw))) %>% 
+  mutate(
+    rmse_model1 = map2_dbl(.x = compare_model1, .y = test, ~rmse(.x,.y)),
+    rmse_model2 = map2_dbl(.x = compare_model2, .y = test, ~rmse(.x,.y)),
+    rmse_regression_model = map2_dbl(regression_model, .y = test, ~rmse(model = .x, .y))) %>% 
+  select(rmse_model1, rmse_model2, rmse_regression_model)
+
+cv
+```
 I compared the model to two others:
-One using length at birth and gestational age as predictors (main effects only). One using head circumference, length, sex, and all interactions (including the three-way interaction) between these.
+One using length at birth and gestational age as predictors (main effects only). One using head circumference, length, sex, and all interactions (including the three-way interaction) between these. i made the comparison in terms of the cross-validated prediction error, used crossv_mc, and used functions in purrr as appropriate.
