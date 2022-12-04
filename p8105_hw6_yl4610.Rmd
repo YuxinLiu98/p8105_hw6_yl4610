@@ -85,7 +85,7 @@ I used mutate to create a city_state variable and a binary variable indicating w
 Baltimore_reg = 
  homicide_raw %>% 
   filter(city_state == "Baltimore, MD") %>%
-  mutate (y_var = ifelse(result == "solved",0,1)) %>% 
+  mutate (y_var = ifelse(result == "solved",1,0)) %>% 
     glm(y_var ~ victim_age + victim_sex + victim_race, data =., family = 'binomial'(link='logit')) %>% 
     broom::tidy () %>% 
     mutate(odds_ratio = exp(estimate),
@@ -96,7 +96,9 @@ Baltimore_reg =
 
 Baltimore_reg
 ```
-For the city of Baltimore, MD, I used the glm function to fit a logistic regression with resolved vs unresolved as the outcome and victim age, sex and race as predictors. Save the output of glm as an R object; apply the broom::tidy to this object; and obtain the estimate and confidence interval of the adjusted odds ratio for solving homicides comparing male victims to female victims keeping all other variables fixed.
+For the city of Baltimore, MD, I used the glm function to fit a logistic regression with resolved vs unresolved as the outcome and victim age, sex and race as predictors. Save the output of glm as an R object; apply the broom::tidy to this object.
+The adjusted odds ratio is 0.43 and confidence interval of the adjusted odds ratio for solving homicides comparing male victims to female victims keeping all other variables fixed is (0.32, 0.56).
+
 
 ```{r}
 homicide_all_cities = 
@@ -226,3 +228,21 @@ cv
 ```
 I compared the model to two others:
 One using length at birth and gestational age as predictors (main effects only). One using head circumference, length, sex, and all interactions (including the three-way interaction) between these. i made the comparison in terms of the cross-validated prediction error, used crossv_mc, and used functions in purrr as appropriate.
+
+```{r}
+comparison_plot =
+  cv %>% 
+  pivot_longer(
+    everything(),
+    names_to = "model",
+    values_to = "rmse") %>% 
+  ggplot(aes(x = model, y = rmse)) + 
+  geom_violin() +
+  labs(
+    title = "rmse of 3 different models",
+    x = "model",
+    y = "rmse") 
+
+comparison_plot
+```
+
