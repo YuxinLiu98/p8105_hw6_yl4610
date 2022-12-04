@@ -97,13 +97,13 @@ Baltimore_reg =
 Baltimore_reg
 ```
 For the city of Baltimore, MD, I used the glm function to fit a logistic regression with resolved vs unresolved as the outcome and victim age, sex and race as predictors. Save the output of glm as an R object; apply the broom::tidy to this object.
-The adjusted odds ratio is 0.43 and confidence interval of the adjusted odds ratio for solving homicides comparing male victims to female victims keeping all other variables fixed is (0.32, 0.56).
+The estimate is -0.85. The adjusted odds ratio is 0.43 and confidence interval of the adjusted odds ratio for solving homicides comparing male victims to female victims keeping all other variables fixed is (0.32, 0.56).
 
 
 ```{r}
 homicide_all_cities = 
   homicide_raw %>% 
-  mutate (y_var = ifelse(result == "solved",0,1)) %>%
+  mutate (y_var = ifelse(result == "solved",1,0)) %>%
   nest(data = -city_state) %>% 
   mutate(
     glm_all_cities = map(data, ~glm(y_var ~ victim_age + victim_sex + victim_race, data = ., family = 'binomial'(link='logit'))),
@@ -137,7 +137,7 @@ homicide_plot
 ```
 
 I created a plot that shows the estimated ORs and CIs for each city. Then I organized cities according to estimated OR.
-This scatter plot shows that New York, NY has the highest estimated odds ratio for solving homicides comparing male victims to female victims keeping all other variables fixed, while Albuquerque, NM has the lowest estimated odds ratio.
+This scatter plot shows that New York, NY has the lowest estimated odds ratio for solving homicides comparing male victims to female victims keeping all other variables fixed, while Albuquerque, NM has the highest estimated odds ratio. Also, the 95% CI for Albuquerque, NM is the widest when compared to other city states.
 
 # Question 3 
 ```{r, message = FALSE}
@@ -153,7 +153,7 @@ birthweight_raw =
 ```{r}
 skimr::skim(birthweight_raw) 
 ```
-There is no missing data.
+According to the output of skimr::skim, there is no missing data.
 I Loaded and cleaned the data for regression analysis (i.e. convert numeric to factor where appropriate, check for missing data, etc.).
 
 ```{r}
@@ -171,7 +171,7 @@ regression_model %>%
 
 regression_model
 ```
-I proposed a regression model for birthweight. Describe your modeling process 
+I proposed a regression model for birthweight (named as regression_model). Since it is a linear regression model, I used "Backward Elimination" strategy to build the model.First, I built a maximum model including all the predictors, then I deleted one predictor each time by determining whether the least significant variable currently in the model can be removed because of its high p value (>0.05). Finally, all the predictors in the model have p-value less than 0.05. mrace3 has p-value greater than 0.05, but other categories of this predictor have p-values less than 0.05, so I kept it. I did not include the process of deleting one predictor each time because it is too long, so I only kept the final model.
 
 ```{r}
 residual_plot =
@@ -205,6 +205,8 @@ compare_model2 %>%
   broom::tidy() %>% 
   knitr::kable(digits = 4)
 ```
+I compared the model to two others:
+One using length at birth and gestational age as predictors (main effects only). One using head circumference, length, sex, and all interactions (including the three-way interaction) between these.
 
 ```{r}
 cv_df = crossv_mc(birthweight_raw, 100)
@@ -226,8 +228,7 @@ cv =
 
 cv
 ```
-I compared the model to two others:
-One using length at birth and gestational age as predictors (main effects only). One using head circumference, length, sex, and all interactions (including the three-way interaction) between these. i made the comparison in terms of the cross-validated prediction error, used crossv_mc, and used functions in purrr as appropriate.
+I made the comparison in terms of the cross-validated prediction error, used crossv_mc, and used functions in purrr as appropriate.
 
 ```{r}
 comparison_plot =
@@ -245,4 +246,4 @@ comparison_plot =
 
 comparison_plot
 ```
-
+My model has lower average rmse when compared to two other models. 
